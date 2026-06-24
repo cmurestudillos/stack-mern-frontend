@@ -1,9 +1,25 @@
 export default function userReducer(state, action) {
   switch (action.type) {
+    case 'LIST_USERS_START':
+      return {
+        ...state,
+        loading: true,
+        loadError: false,
+      };
+
     case 'LIST_USERS':
       return {
         ...state,
-        usuarios: state.usuarios,
+        usuarios: action.payload,
+        loading: false,
+        loadError: false,
+      };
+
+    case 'LIST_USERS_ERROR':
+      return {
+        ...state,
+        loading: false,
+        loadError: true,
       };
 
     case 'ADD_USER':
@@ -12,7 +28,7 @@ export default function userReducer(state, action) {
         usuarios: [...state.usuarios, action.payload],
       };
 
-    case 'UPDATE_USER':
+    case 'UPDATE_USER': {
       const updatedUsuario = action.payload;
       const updatedUsuarios = state.usuarios.map(usuario => {
         if (usuario.id === updatedUsuario.id) {
@@ -25,6 +41,7 @@ export default function userReducer(state, action) {
         ...state,
         usuarios: updatedUsuarios,
       };
+    }
 
     case 'REMOVE_USER':
       return {

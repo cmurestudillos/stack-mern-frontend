@@ -1,8 +1,94 @@
-.bg-custom {
-  background-image: linear-gradient(15deg, #61dbfb 0%, #80c7d0 100%);
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-.m-container{
-  margin-top: 7rem;
-  margin-bottom: 7rem;
+.app-menubar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-radius: 0;
+}
+
+.app-content {
+  flex: 1;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+  box-sizing: border-box;
+}
+
+.page-title {
+  margin: 0 0 1.5rem;
+  font-weight: 600;
+}
+
+.app-footer {
+  background: var(--surface-900, #1e1e1e);
+  color: var(--surface-0, #fff);
+  text-align: center;
+  padding: 0.75rem 1rem;
+  margin-top: auto;
+}
+
+.app-footer p {
+  margin: 0.15rem 0;
+}
+
+.user-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.user-card-body {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-info h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.user-info p {
+  margin: 0.25rem 0 0;
+  color: var(--text-color-secondary);
+  font-size: 0.9rem;
+}
+
+.user-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.form-card {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.app-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 1rem;
+  text-align: center;
 }

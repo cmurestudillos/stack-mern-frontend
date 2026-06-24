@@ -1,77 +1,90 @@
 import React, { Fragment, useContext } from 'react';
 import { GlobalContext } from '../context/GlobalState';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { Card } from 'primereact/card';
+import { Avatar } from 'primereact/avatar';
+import { Button } from 'primereact/button';
+import { ProgressSpinner } from 'primereact/progressspinner';
+import { Message } from 'primereact/message';
+import { confirmDialog } from 'primereact/confirmdialog';
 import avatar from '../assets/img/avatar.png';
-import Swal from 'sweetalert2';
+import { getAvatarUrl } from '../config/axios';
+import { useAppToast } from '../context/ToastContext';
 
 const ListadoUsuarios = () => {
-  const { usuarios, deleteUsuario } = useContext(GlobalContext);
+  const { usuarios, loading, loadError, obtenerUsuarios, deleteUsuario } = useContext(GlobalContext);
+  const navigate = useNavigate();
+  const showToast = useAppToast();
 
   const eliminarUsuario = id => {
-    Swal.fire({
-      title: 'Esta seguro de eliminar al usuario?',
-      showCancelButton: true,
-      confirmButtonText: 'Confirmar',
-      confirmButtonColor: '#198757',
-      cancelButtonText: 'Cancelar',
-      cancelButtonColor: '#db3448',
-    }).then(result => {
-      if (result.isConfirmed) {
+    confirmDialog({
+      header: 'Confirmar',
+      message: '¿Esta seguro de eliminar al usuario?',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Confirmar',
+      rejectLabel: 'Cancelar',
+      accept: () => {
         deleteUsuario(id);
-        Swal.fire({
-          position: 'top-end',
-          icon: 'success',
-          title: 'Usuario eliminado con exito.',
-          showConfirmButton: false,
-          timer: 500,
-        });
-      }
+        showToast({ severity: 'success', summary: 'Usuario eliminado con éxito.', life: 1500 });
+      },
     });
   };
 
+  if (loading) {
+    return (
+      <div className="state-container">
+        <ProgressSpinner strokeWidth="4" />
+        <p>Cargando usuarios...</p>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="state-container">
+        <Message
+          severity="error"
+          text="No se ha podido cargar el listado de usuarios. Comprueba tu conexión a internet o que la API esté disponible."
+        />
+        <Button label="Reintentar" icon="pi pi-refresh" onClick={obtenerUsuarios} />
+      </div>
+    );
+  }
+
+  if (!usuarios || usuarios.length === 0) {
+    return (
+      <div className="state-container">
+        <Message severity="info" text="No hay usuarios para mostrar." />
+      </div>
+    );
+  }
+
   return (
     <Fragment>
-      {usuarios !== undefined &&
-        usuarios.map(user => (
-          <div className="card mb-3" key={user.id}>
-            <div className="row g-0">
-              <div className="col-md-4 text-center">
-                {user.avatar ? (
-                  <img
-                    src={user.avatar}
-                    className="img-fluid rounded-circle shadow p-3 mb-3 mt-3 bg-body rounded"
-                    alt={user.first_name}></img>
-                ) : (
-                  <img
-                    src={avatar}
-                    className="img-fluid rounded-circle shadow p-3 mb-3 mt-3 bg-body rounded"
-                    alt={user.first_name}></img>
-                )}
-              </div>
-              <div className="col-md-8">
-                <div className="card-body">
-                  <h5 className="card-title">
-                    {user.first_name} {user.last_name}
-                  </h5>
-                  <p className="card-text">{user.email}</p>
-                  <div className="card-text">
-                    <div className="d-grid gap-2 d-md-block">
-                      <Link to={'/editar/' + user.id} className="btn btn-outline-warning btn-lg w-25 m-1" type="button">
-                        Editar
-                      </Link>
-                      <button
-                        className="btn btn-outline-danger btn-lg w-25 m-1"
-                        type="button"
-                        onClick={() => eliminarUsuario(user.id)}>
-                        Eliminar
-                      </button>
-                    </div>
-                  </div>
-                </div>
+      <div className="user-grid">
+        {usuarios.map(user => (
+          <Card key={user.id} className="user-card">
+            <div className="user-card-body">
+              <Avatar image={user.avatar ? getAvatarUrl(user.avatar) : avatar} size="xlarge" shape="circle" />
+              <div className="user-info">
+                <h3>
+                  {user.first_name} {user.last_name}
+                </h3>
+                <p>{user.email}</p>
               </div>
             </div>
-          </div>
+            <div className="user-actions">
+              <Button
+                label="Editar"
+                icon="pi pi-pencil"
+                severity="warning"
+                onClick={() => navigate(`/editar/${user.id}`)}
+              />
+              <Button label="Eliminar" icon="pi pi-trash" severity="danger" onClick={() => eliminarUsuario(user.id)} />
+            </div>
+          </Card>
         ))}
+      </div>
     </Fragment>
   );
 };

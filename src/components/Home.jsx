@@ -1,19 +1,11 @@
-import React, { Fragment, useEffect, useContext } from 'react';
+import React, { Fragment } from 'react';
 import ListadoUsuarios from './ListadoUsuarios';
-import { GlobalContext } from './../context/GlobalState';
 
 const Home = () => {
-  const { obtenerUsuarios } = useContext(GlobalContext);
-  // Obtener usuarios cuando carga el proyecto
-  useEffect(() => {
-    obtenerUsuarios();
-  }, []);
-
   return (
     <Fragment>
-      <div className="container m-container">
-        <ListadoUsuarios />
-      </div>
+      <h1 className="page-title">Usuarios</h1>
+      <ListadoUsuarios />
     </Fragment>
   );
 };
